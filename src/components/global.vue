@@ -1,0 +1,31 @@
+<!--全局变量-->
+<script>
+	let barSingleChart,lineSingleChart;
+	
+	const concatObjs = (obj1,obj2) =>{
+		let arr = [];
+			for (let i in obj1) {
+			    let objItem = {key:i,value:obj1[i]};
+			    arr.push(objItem);
+			}
+			
+			for (let i in obj2) {
+			    let objItem = {key:i,value:obj2[i]};
+			    arr.push(objItem);
+			}
+			
+			let obj = {};
+			for (let item in arr){
+	         	obj[arr[item].key] = arr[item].value;
+			};
+			
+			console.log('新的对象'+JSON.stringify(obj));
+			return obj;	
+	}
+	
+	export default{
+    	barSingleChart,
+    	lineSingleChart,
+    	concatObjs
+  	}
+</script>

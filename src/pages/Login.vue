@@ -1,0 +1,71 @@
+<!--登录页面-->
+<template>
+	<div>
+		<LoginBg />
+		<div class="loginDiv">
+			<img src="@/assets/imgs/login_logo.png"/>
+			<h1 class="sysTitle">{{title}}</h1>
+			<h2 class="sysTitleEn">{{titleEn}}</h2>
+			<div class="btnsDiv">
+				<span class="inputItem">
+					<input autofocus="autofocus" type="text" :placeholder="userPh" v-model="userId"/>
+					<i class="iconfont icon-ddcaf jokerIcon"></i>
+				</span>
+				<span class="inputItem">
+					<input type="password" :placeholder="passwordPh" v-model="userPassword"/>
+					<i class="iconfont icon-pwd-fill jokerIcon"></i>
+				</span>
+				<span class="login-btn" @click="loginCallBack" v-html="loginBtn"></span>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+	import LoginBg from '@/components/loginBg'
+  	export default{
+  		name: 'Login',
+	  	components: {
+			LoginBg
+		},
+	  	data () {
+	    	return {
+	    		title:'北京移动数据一致性管控平台',
+	    		titleEn:'Beijing Mobile Data Consistency Management And Control Platform',
+	    		userPh:'请输入用户名',
+	    		passwordPh:'请输入密码',
+	    		loginBtn:'登&nbsp;&nbsp;录',
+	    		userId:'',
+	    		userPassword:''
+	    	}
+	  	},
+	  	methods:{
+	  		loginCallBack(){
+	  			//防止重复点击
+	  			if (this.loginBtn!=='登&nbsp;&nbsp;录') {return;}
+	  			var self = this;
+	  			this.loginBtn = '登&nbsp;录&nbsp;中&nbsp;...';
+	  			setTimeout(function () {
+	  				let userInfo = {'user':self.userId,'password':self.userPassword};
+	  				console.log('测试'+userInfo);
+	  				self.$store.dispatch('setParamasInfo',userInfo);
+				    self.loginBtn = '登&nbsp;&nbsp;录';
+				    self.$router.push({
+				    	name:'Home'
+				    });
+				}, 1000);
+	  		}
+	  	}
+  	}
+</script>
+<style scope>
+	.loginDiv{width: 100%;position: absolute;top: calc(50% - 200px);left: 0;text-align: center;color: #FFFFFF;}
+	.loginDiv .sysTitle{display: block;font-size: 42px;padding-top: 15px;}
+	.loginDiv .sysTitleEn{display: block;font-size: 18px;}
+	.loginDiv .btnsDiv{padding-top: 50px;min-width: 900px;}
+	.loginDiv .btnsDiv .inputItem{position: relative;}
+	.loginDiv .btnsDiv .inputItem input{color: #333;font-size: 14px;height: 35px;width: 220px;border: none;display: inline-block;margin-right: 20px;box-shadow: 0 0 2px 1px #09f;padding-left: 10px;}
+	.loginDiv .btnsDiv .inputItem .jokerIcon{position: absolute;right: 35px;top: -6px;color: #ccc;font-size: 18px;line-height: 35px;}
+	.loginDiv .btnsDiv .login-btn{font-size: 15px;height: 35px;font-weight: bold;width: 160px;text-align: center;background-color: #09f;display: inline-block;line-height: 35px;}
+	.loginDiv .btnsDiv .login-btn:hover{background-color: #3e58c9;box-shadow: 0 0 2px 1px #09f;}
+</style>

@@ -1,0 +1,140 @@
+<!--CRM-BOSS日增量稽核A单边B单边不一致-->
+<template>
+	<div>
+		<!--面包屑-->
+		<div class="pageLocal">
+			<el-breadcrumb separator-class="el-icon-arrow-right">
+			  	<el-breadcrumb-item :to="{path:'/home'}">首页</el-breadcrumb-item>
+			  	<el-breadcrumb-item :to="{path:'/basicBusiness'}">基础业务稽核</el-breadcrumb-item>
+			  	<el-breadcrumb-item :to="{path:'/basicBusiness/crmBossIncrement'}">CRM-BOSS日增量稽核</el-breadcrumb-item>
+			  	<el-breadcrumb-item>{{name}}</el-breadcrumb-item>
+			</el-breadcrumb>
+		</div>
+		<!--数据表格-->
+		<div class="tableMenu">
+			<div class="content-top">
+				<i class="iconfont icon-biaotishutiao6x25"></i>数据总览
+				<span class="btn-del" title="返回上级菜单" @click="backRouter"><i class="iconfont icon-search"></i>返回</span>
+				<span class="btn-del" title="查询"><i class="iconfont icon-search"></i>查询</span>
+				<el-input placeholder="手机号" v-model="bullId" clearable></el-input>
+				<div class="clear"></div>
+			</div>
+			<el-table
+			    :data="tableData"
+			    stripe
+			    border
+			    :header-cell-style="{backgroundColor:'#f5f7fa'}"
+			    style="width: 100%"
+		    >
+			    <el-table-column prop="AUDIT_DATE" label="稽核时间" width='100px'></el-table-column>
+			    <el-table-column prop="AUDIT_BATCH" label="稽核批次" width='100px'></el-table-column>
+			    <el-table-column prop="CHECK_NAME" label="稽核点名称"></el-table-column>
+			    <el-table-column prop="PROD_NAME" label="产品名称"></el-table-column>
+			    <el-table-column prop="RESULT_TYPE" label="比对结果类型"></el-table-column>
+			    <el-table-column prop="USER_ID" label="用户ID" width='110px'></el-table-column>
+			    <el-table-column prop="PROD_INST_ID" label="产品实例ID" width='100px'></el-table-column>
+			    <el-table-column prop="PROD_ID" label="产品ID" width='80px'></el-table-column>
+			    <el-table-column prop="BILL_ID" label="手机号码" width='100px'></el-table-column>
+			    <el-table-column prop="BRAND_NAME" label="品牌" width='100px'></el-table-column>
+			    <el-table-column prop="ORDER_NAME" label="套餐" width='80px'></el-table-column>
+			    <el-table-column prop="DUSER_STATE_NAME" label="用户状态" width='100px'></el-table-column>
+			    <el-table-column prop="OS_STATE" label="停开机状态" width='100px'></el-table-column>
+			    <el-table-column prop="OS_DATE" label="停机时间" width='130px'></el-table-column>
+			    <el-table-column prop="USER_EFF_DATE_YYYYMM" label="用户生效月" width='80px'></el-table-column>
+			    <el-table-column prop="USER_EFF_DATE_DD" label="用户生效日" width='80px'></el-table-column>
+			    <el-table-column prop="PROD_EFFECTIVE_DATE" label="CRM开始时间" width='80px'></el-table-column>
+			    <el-table-column prop="PROD_EXPIRE_DATE" label="CRM结束时间" width='80px'></el-table-column>
+			    <el-table-column prop="PROD_STATE" label="CRM订购状态" width='80px'></el-table-column>
+			    <el-table-column prop="BOSS_VALID_DATE" label="平台开始时间" width='80px'></el-table-column>
+			    <el-table-column prop="BOSS_RECORD_STATE" label="BOSS订购状态" width='80px'></el-table-column>
+		  	</el-table>
+			<div class="block">
+			    <el-pagination
+			      @size-change="handleSizeChange"
+			      @current-change="handleCurrentChange"
+			      :current-page.sync="currentPage"
+			      :page-size.sync="pageSize"
+			      layout="prev, pager, next, total"
+			      :total='86'>
+			    </el-pagination>
+		  	</div>
+		</div>	
+	</div>
+</template>
+
+<script>
+	import { mapGetters } from 'vuex'
+	import { getBossAddList as getBossAddList } from '@/api/Api'
+	export default{
+		name: 'CrmBossIncrementABN',
+		computed:{
+		 	...mapGetters(['getParamas']) 
+		},
+	  	data () {
+	    	return {
+	    		name:'A单边B单边不一致',
+	    		currentPage: 1,
+	    		pageSize:10,
+	    		bullId:'',
+	    		tableData: [
+		    		{
+		    			AUDIT_DATE:'aabbcc',
+		    			AUDIT_BATCH:'1601476',
+			          	CHECK_NAME: '201808111',
+			          	PROD_NAME: '1185030',
+			          	CHECKNAME: 'BOSS增量稽核',
+			         	GATEWAYTOTALNUM: '100.03%',
+			          	BILL_ID: 10086,
+			          	ERRORNUM: 999,
+			          	CRMTOTALNUM: '每日上限',
+			          	CONSISRATIO: '10.02%',
+			          	REPORTLINK: 'ATTRIBUTE'
+			     	}
+		        ]
+	    	}
+	  	},
+	  	created(){
+	   		this.getList();
+	   	},
+	  	methods: {
+			getList(){
+				let self = this;
+				const params = this.getParamas;
+				getBossAddList(
+					{
+						auditTime:params.auditTime,
+			    	    auditBatch:params.auditBatche,
+			    	    topicId:params.topicId,
+			    	    resultType:params.resultType,
+			    	    start:self.currentPage-1,
+			    	    limit:self.pageSize,
+			    	    sourceSystem:'BOSSADD',
+			    	    bullId:self.bullId,
+			    	    isJump:''
+					}
+				).then(res=>{
+					console.log('请求成功！'+JSON.stringify(res.data.response));
+					self.tableData = res.data.response.reList;
+				}).catch(err=>{
+					console.log(err);
+					console.log('请求失败！');
+				})
+			},
+			backRouter(){
+				this.$router.back(-1);
+			},
+	      	handleSizeChange(val) {
+	        	console.log(`每页 ${val} 条`);
+	      	},
+	      	handleCurrentChange(val) {
+	        	console.log(`当前页: ${val}`);
+	        	this.getList();
+	      	}
+	    }
+	}
+</script>
+
+<style scoped>
+	.block{text-align: right;margin-top: 15px;}
+	.content-top-child{position: absolute;top: 55px;right: 0;}
+</style>

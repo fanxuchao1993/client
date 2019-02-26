@@ -1,0 +1,111 @@
+<!--CRM-BOSS日增量稽核查看详情-->
+<template>
+	<div>
+		<!--面包屑-->
+		<div class="pageLocal">
+			<el-breadcrumb separator-class="el-icon-arrow-right">
+			  	<el-breadcrumb-item :to="{path:'/home'}">首页</el-breadcrumb-item>
+			  	<el-breadcrumb-item :to="{path:'/dayBillAnalysis'}">日账分析</el-breadcrumb-item>
+			  	<el-breadcrumb-item :to="{path:'/dayBillAnalysis/overviewDBA'}">概览</el-breadcrumb-item>
+			  	<el-breadcrumb-item>{{name}}</el-breadcrumb-item>
+			</el-breadcrumb>
+		</div>
+		<!--数据表格-->
+		<div class="tableMenu">
+			<div class="content-top">
+				<i class="iconfont icon-biaotishutiao6x25"></i>{{name}}
+				<span class="btn-del" title="返回上级菜单" @click="backRouter"><i class="iconfont icon-search"></i>返回</span>
+				<span class="btn-del" title="查询" @click="getList"><i class="iconfont icon-search"></i>查询</span>
+				<el-select v-model="checkType" placeholder="日费分类" clearable>
+				    <el-option
+				      	v-for="item in options"
+				      	:key="item.ASSORTID"
+				      	:label="item.ASSORTNAME"
+				      	:value="item.ASSORTID">
+				    </el-option>
+			  	</el-select>
+				<el-date-picker
+					v-model="auditDay"
+					type="date"
+					align="left"
+					value-format="yyyyMMdd"
+			      	placeholder="选择日期">
+			    </el-date-picker>
+				<div class="clear"></div>
+			</div>
+			<el-table
+			    :data="tableData"
+			    stripe
+			    border
+			    :header-cell-style="{backgroundColor:'#f5f7fa'}"
+			    style="width: 100%"
+		    >
+			    <el-table-column prop="FEE_ITEM_CODE" label="费用科目" sortable></el-table-column>
+			    <el-table-column prop="ITEM_NAME" label="费用科目名称" sortable></el-table-column>
+			    <el-table-column prop="TOTALNUM" label="日扣费次数" sortable></el-table-column>
+			    <el-table-column prop="NEWAVGDAYFEE" label="日平均单次扣费(元)" sortable></el-table-column>
+			    <el-table-column prop="NEWAVGMONFEE" label="月平均单次扣费(元)" sortable></el-table-column>
+		  	</el-table>
+		</div>	
+	</div>
+</template>
+
+<script>
+	import { mapGetters } from 'vuex'
+	import { getDayBillAnalysisDetails } from '@/api/Api'
+	export default{
+		name: 'DayBillAnalysisDetails',
+		computed:{
+		 	...mapGetters(['getParamas'])
+		},
+	  	data () {
+	    	return {
+	    		name:'日账详情',
+	    		currentPage: 1,
+	    		pageSize:10,
+	    		auditDay:'',
+	    		checkType:'',
+	    		tableData: [],
+		        options: []
+	    	}
+	  	},
+	  	created(){
+	  		const params = this.getParamas;
+	  		this.auditDay = params.billCycle;
+	  		this.checkType = params.assortType;
+	   		this.getList();
+	   	},
+	  	methods: {
+			getList(){
+				let self = this;
+				
+				getDayBillAnalysisDetails(
+					{
+						billCycle:self.auditDay,
+			    	    assortType:self.checkType
+					}
+				).then(res=>{
+					console.log('请求成功！'+JSON.stringify(res.data.response));
+					self.tableData = res.data.response.rslist;
+					self.options = res.data.response.assortTypelist;
+					
+//					self.auditDay = res.data.response.billCycle;
+//					self.checkType = res.data.response.assortType;
+
+				}).catch(err=>{
+					console.log(err);
+					console.log('请求失败！');
+				})
+			},
+			backRouter(){
+				this.$router.back(-1);
+			},
+
+	    }
+	}
+</script>
+
+<style scoped>
+	.block{text-align: right;margin-top: 15px;}
+	.content-top-child{position: absolute;top: 55px;right: 0;}
+</style>
