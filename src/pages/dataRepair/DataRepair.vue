@@ -65,7 +65,7 @@
 						route:'/test'
 					},
 					{
-						name:'MCAS数据修复报表',
+						name:'MCAS数据修复报表uj',
 						route:'/test'
 					}
 				]
