@@ -45,7 +45,7 @@
 						route:'/test'
 					},
 					{
-						name:'进度监控',
+						name:'进度监控',‘’
 						route:'/test'
 					},
 					{
