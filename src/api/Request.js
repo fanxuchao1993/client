@@ -1,6 +1,7 @@
 /*引入资源请求插件*/
 import axios from 'axios';
 import { Loading } from 'element-ui';
+import { Notification } from 'element-ui';
 //import store from '@/store';
 //import { getToken } from './auth'
 //import Qs from 'qs'
@@ -10,10 +11,11 @@ let _loadingInstance = null
 // 创建axios实例
 const httpReq = axios.create();
 //httpReq.defaults.baseURL = process.env.BASE_API
-httpReq.defaults.baseURL = 'http://10.4.5.142:8080'
+httpReq.defaults.baseURL = 'http://10.4.5.87:8081'
 //httpReq.defaults.headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
 //httpReq.defaults.headers = { 'X-Requested-With': 'XMLHttpRequest' }
-httpReq.defaults.timeout = 3000
+httpReq.defaults.timeout = 6000000
+axios.defaults.withCredentials=true;
 
 //请求之前拦截器
 httpReq.interceptors.request.use(function (config) {
@@ -40,8 +42,16 @@ httpReq.interceptors.response.use(
 
 		if(response.data.code == 200){
 			return Promise.resolve(response)
-		}
-		else{
+		}else if(response.data.code == 500){
+			console.log('返回为500!');
+			Notification.error({
+			  	message:response.data.msg,
+			  	   type:'error',
+			   position:'bottom-left'
+		  	});
+			return Promise.reject(response)
+			
+		}else{
 			console.log('返回不为200!');
 			return Promise.reject(response)
 		}
@@ -56,6 +66,7 @@ httpReq.interceptors.response.use(
 const sendRequest = (option) =>{
 	option = option||{};
 	option.url = option.url||'';
+	//alert(option.url);
 	option.method = option.method||'post';
 	option.params = option.params||{};
 	option.loading = option.loading !== false;
@@ -72,9 +83,11 @@ const sendRequest = (option) =>{
 	}
 
 	return new Promise((resolve,reject) => {
+		//alert(option.url);
 		let optParam = {url:option.url,method:option.method}
 		if(optParam.method == 'post'){
-			optParam.data = option.params
+			//optParam.data = option.params
+			optParam.data = Qs.stringify(JSON.parse(JSON.stringify(option.params)));
 		}
 		else{
 			optParam.params = option.params

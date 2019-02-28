@@ -23,28 +23,133 @@
 		<!--账号-->
 		<div class="user-menu">
 			<span>欢迎您：{{username}}&nbsp;</span>
-			<span><i class="iconfont icon-gonggao"></i> 公告</span><i class="iconfont icon-shutiao"></i><span>修改密码</span><i class="iconfont icon-shutiao"></i>
-			<i class="iconfont icon-logout" title="注销"></i>
+			<span><i class="iconfont icon-gonggao"></i> 公告</span><i class="iconfont icon-shutiao"></i>
+			<!--<span @click="updatePass">修改密码</span>-->
+			<span @click="dialogFormVisible = true">修改密码</span>	
+			<i class="iconfont icon-shutiao"></i>
+			<i class="iconfont icon-logout" @click="logOutCallBack" title="注销"></i>
 		</div>
+		<div>
+		<el-dialog title="修改密码" :visible.sync="dialogFormVisible">
+					<div>
+						<el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
+						  <el-form-item label="旧密码" prop="passOld">
+						    <el-input  type="password" size="medium" v-model="ruleForm2.passOld" autocomplete="off"></el-input>
+						  </el-form-item>
+						  <el-form-item label="新密码" prop="pass">
+						    <el-input type="password" size="medium" v-model="ruleForm2.pass" autocomplete="off"></el-input>
+						  </el-form-item>
+						  <el-form-item label="确认新密码" prop="checkPass">
+						    <el-input type="password" size="medium" v-model="ruleForm2.checkPass" autocomplete="off"></el-input>
+						  </el-form-item>
+						  <el-button type="primary" @click="updatePass">提交</el-button>
+						  <el-button @click="resetForm('ruleForm2')">重置</el-button>
+						</el-form>
+						<!--<div slot="footer" class="dialog-footer">
+							
+						</div>	-->
+					</div>
+				</el-dialog>
+		</div>		
 	</div>
 </template>
 
 <script>
+	import { mapGetters } from 'vuex'
 	import { swiper, swiperSlide } from 'vue-awesome-swiper'
 	import 'swiper/dist/css/swiper.min.css'
+	import { LogOut as LogOut } from '@/api/Api'
+	import { userMessage as userMessage } from '@/api/Api'
+	import { validatePassword as validatePassword } from '@/api/Api'
+	
+	import { MessageBox } from 'element-ui';
+	import { Dialog } from 'element-ui';
+	import Vue from 'vue';
+	import { Alert } from 'element-ui';
+	import { Input } from 'element-ui';
+	import { Button } from 'element-ui';
+	import { Form } from 'element-ui';
+	import { FormItem } from 'element-ui';
+	
+	Vue.use(Dialog);
+	Vue.use(Input);
+	Vue.use(Button);
+	Vue.use(Form);
+	Vue.use(FormItem);
+	
+	
 	export default{
 		name:'headerNav',
 		components: {
+			
 		    swiper,
 		    swiperSlide
+		    
 		},
+		computed:{
+		 	...mapGetters(['getParamas']) 
+		},
+		created(){
+			this.ruleForm2.passOld = this.getParamas.passOld;
+			this.ruleForm2.pass = this.getParamas.pass;
+			this.ruleForm2.checkPass = this.getParamas.checkPass;
+	   		this.loginUserName();
+	   	},
 		data(){
+			var validatePassOld = (rule, value, callback) => {
+		        if (value === '') {
+		          callback(new Error('请输入旧密码'));
+		        } else {
+//		          if (this.ruleForm2.passOld !== '') {
+//		            this.$refs.ruleForm2.validateField('passOld');
+//		          }
+		          callback();
+		        }
+		      };
+		      var validatePass = (rule, value, callback) => {
+		        if (value === '') {
+		          callback(new Error('请输入新密码'));
+		        } else {
+		          if (this.ruleForm2.checkPass !== '') {
+		            this.$refs.ruleForm2.validateField('checkPass');
+		          }
+		          callback();
+		        }
+		      };
+		      var validatePass2 = (rule, value, callback) => {
+		        if (value === '') {
+		          callback(new Error('请再次输入新密码'));
+		        } else if (value !== this.ruleForm2.pass) {
+		          callback(new Error('两次输入的新密码不一致!'));
+		        } else {
+		          callback();
+		        }
+		      };
 			return{
 				swiperOption: {
 		          	slidesPerView: 'auto',
 		          	slideToClickedSlide: true
 		       	},
-				username:'马俊',
+
+		        rules2: {
+		          passOld: [
+		            { validator: validatePassOld, trigger: 'blur' }
+		          ],
+		          pass: [
+		            { validator: validatePass, trigger: 'blur' }
+		          ],
+		          checkPass: [
+		            { validator: validatePass2, trigger: 'blur' }
+		          ]
+		          
+		        },
+        		dialogFormVisible: false,
+        		ruleForm2: {
+	        		passOld:'',
+	        		pass:'',
+	        		checkPass:''
+        		},
+				username:'',
 				navData:[
 					{
 						name:'首页',
@@ -104,6 +209,73 @@
 					}
 				]
 			}
+		},
+		methods:{
+			loginUserName(){
+				var self = this;
+				
+				const params = this.getParamas;
+				userMessage(
+	  					{
+	  						//console.log('请求参数！'+JSON.stringify(this.$route.params.userId));
+	  						//alert(this.$route.params.userId);
+	  						userId:params.userId
+	  						
+	  					}
+	  			).then(res=>{
+	  					
+	  					self.username=res.data.response.user.USERNAME;
+	  					
+	  			}).catch(err=>{
+	  				
+	  				
+	  				
+	  			})	
+				
+				
+			},
+			resetForm(formName) {
+        		this.$refs[formName].resetFields();
+     		},
+			updatePass(){
+				var self = this;
+				alert(self.ruleForm2.passOld);
+	  			alert(self.ruleForm2.pass);
+				validatePassword(
+	  					{
+	  						
+	  						oldPassword:self.ruleForm2.passOld,
+	  						newPassword:self.ruleForm2.pass
+	  					}
+	  			).then(res=>{
+	  					
+	  			}).catch(err=>{
+	  				
+	  			})	
+
+			},
+			logOutCallBack(){
+				var self = this;
+				self.$router.push({
+					name:'Login'
+				});
+
+//				
+//				LogOut(
+//	  					{
+//	  						
+//	  					}
+//	  			).then(res=>{
+//	  					
+//	  					
+//	  			}).catch(err=>{
+//	  				
+//	  				
+//	  				
+//	  			})	
+				
+			}
+			
 		}
 	}
 </script>

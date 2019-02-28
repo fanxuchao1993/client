@@ -1,0 +1,141 @@
+10
+
+dir
+5166
+svn://10.4.5.161/CODE/lbdp_web/DataConsistencySys/src/pages
+svn://10.4.5.161
+
+
+
+2018-10-31T06:58:10.268665Z
+5163
+huangkaisong
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2bfef880-a29e-11e2-b58f-5ba77287da3a
+
+securityManage
+dir
+
+Root.vue
+file
+
+
+
+
+2018-10-31T07:31:47.215231Z
+a323b0b004ab067ffbd224b33cd93136
+2018-10-12T02:23:43.344375Z
+5115
+chenzong
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+362
+
+dayBillAnalysis
+dir
+
+commonPage
+dir
+
+dataQualityPlatform
+dir
+
+auditResults
+dir
+
+home
+dir
+
+basicBusiness
+dir
+
+familyBusiness
+dir
+
+personalBusiness
+dir
+
+Login.vue
+file
+5206
+
+
+
+2018-11-16T08:20:18.593592Z
+977f8ea56d49d4703eb7d8bfa1375828
+2018-11-13T08:59:44.109099Z
+5195
+fanjianing
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4275
+
+comparisonReport
+dir
+
+dispatchManage
+dir
+
+groupBusiness
+dir
+
+ruleBaseManage
+dir
+
+dataRepair
+dir
+
+dataAnalysis
+dir
+

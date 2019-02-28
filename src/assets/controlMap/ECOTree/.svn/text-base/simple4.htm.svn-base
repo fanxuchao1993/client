@@ -1,0 +1,65 @@
+<html>
+	<head>
+		<title>ECOTree Simple Tree 4</title>
+		<script type="text/javascript" src="ECOTree.js"></script>
+		<link type="text/css" rel="stylesheet" href="ECOTree.css" />
+		<xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v"/>
+		<style>v\:*{ behavior:url(#default#VML);}</style> 			
+		<style>
+			.copy {
+				font-family : "Verdana";				
+				font-size : 10px;
+				color : #CCCCCC;
+			}
+		</style>
+		<script>
+			var t = null;
+			
+			function CreateTree() {
+				t = new ECOTree('t','sample2');						
+				t.config.iRootOrientation = ECOTree.RO_LEFT;
+				t.config.defaultNodeWidth = 112;
+				t.config.defaultNodeHeight = 50;
+				t.config.iSubtreeSeparation = 20;
+				t.config.iSiblingSeparation = 10;										
+				t.config.linkType = 'M';//M/B
+				t.config.useTarget = true;
+				t.config.nodeFill = 0;  //0\1
+				t.config.colorStyle = ECOTree.CS_LEVEL;
+				t.config.levelColors = ["#0099FF","#0099FF","#0099FF","#0099FF"];
+				t.config.levelBorderColors = ["#0099FF","#0099FF","#0099FF","#0099FF"];
+				t.config.nodeColor = "#0099FF";
+				t.config.nodeBorderColor = "#0099FF";
+				t.config.linkColor = "#0099FF";
+				t.add(1,-1,'移动收入',null,null,"#0099FF");
+				t.add(2,1,'流量');
+				t.add(3,1,'短信');
+				t.add(4,1,'lichens');
+				t.add(5,1,'animals');
+				t.add(25,2,'哈哈',120,50,"#F08080");
+				t.add(6,2,'mosses');
+				t.add(7,2,'ferns');
+				t.add(8,2,'gymnosperms');
+				t.add(9,2,'dicotyledons');
+				t.add(10,2,'monocotyledons');
+				t.add(11,5,'invertebrates');
+				t.add(12,5,'vertebrates');
+				t.add(13,11,'insects');
+				t.add(14,11,'molluscs');
+				t.add(15,11,'crustaceans');		
+				t.add(16,11,'others');								
+				t.add(17,12,'fish');
+				t.add(18,12,'amphibians');
+				t.add(19,12,'reptiles');		
+				t.add(20,12,'birds');								
+				t.add(21,12,'mammals');												
+				t.UpdateTree();
+			}									
+		</script>
+	</head>
+	<body onload="CreateTree();">
+		<h4>管控地图&nbsp;<span class="copy"></span></h4>
+		<div id="sample2">
+		</div>
+	</body>
+</html>

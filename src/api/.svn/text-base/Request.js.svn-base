@@ -1,0 +1,109 @@
+/*引入资源请求插件*/
+import axios from 'axios';
+import { Loading } from 'element-ui';
+import { Notification } from 'element-ui';
+//import store from '@/store';
+//import { getToken } from './auth'
+//import Qs from 'qs'
+
+let _loadingInstance = null
+
+// 创建axios实例
+const httpReq = axios.create();
+//httpReq.defaults.baseURL = process.env.BASE_API
+httpReq.defaults.baseURL = 'http://10.4.5.162:8089'
+//httpReq.defaults.headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
+//httpReq.defaults.headers = { 'X-Requested-With': 'XMLHttpRequest' }
+httpReq.defaults.timeout = 30000
+axios.defaults.withCredentials=true;
+
+//请求之前拦截器
+httpReq.interceptors.request.use(function (config) {
+    // 在发送请求之前做些什么
+
+    if(config.method == 'post'){
+    	 console.log('POST请求');
+   			config.headers = {
+   				'Content-Type' : 'application/x-www-form-urlencoded'//'application/json; charset=UTF-8'
+   		}
+   	}
+    return config;
+  }, function (error) {
+    // 对请求错误做些什么
+    console.log('请求错误');
+    return Promise.reject(error);
+  }
+);
+
+//请求之后拦截器
+httpReq.interceptors.response.use(
+	response => {
+		if(_loadingInstance) _loadingInstance.close()
+
+		if(response.data.code == 200){
+			return Promise.resolve(response)
+		}else if(response.data.code == 500){
+			console.log('返回为500!');
+			Notification.error({
+			  	message:response.data.msg,
+			  	   type:'error',
+			   position:'bottom-left'
+		  	});
+			return Promise.reject(response)
+			
+		}else{
+			console.log('返回不为200!');
+			return Promise.reject(response)
+		}
+	},
+	error => {
+		if(_loadingInstance) _loadingInstance.close()
+		console.log('响应错误');
+		return Promise.reject(error)
+	}
+);
+
+const sendRequest = (option) =>{
+	option = option||{};
+	option.url = option.url||'';
+	//alert(option.url);
+	option.method = option.method||'post';
+	option.params = option.params||{};
+	option.loading = option.loading !== false;
+//	//loading
+	if(option.loading){
+		_loadingInstance = Loading.service(
+			{
+//				target:document.getElementById('loadingView'),
+				background:'rgba(255,255,255,0.5)',
+				fullscreen:true,
+				text:'拼命加载中...'
+			}
+		);
+	}
+
+	return new Promise((resolve,reject) => {
+		//alert(option.url);
+		let optParam = {url:option.url,method:option.method}
+		if(optParam.method == 'post'){
+			//optParam.data = option.params
+			optParam.data = Qs.stringify(JSON.parse(JSON.stringify(option.params)));
+		}
+		else{
+			optParam.params = option.params
+		}
+//		console.log(option);
+//		console.log('接口地址：'+JSON.stringify(option.url));
+		console.log('接口类型：'+JSON.stringify(option.method));
+		console.log('发送的参数：'+JSON.stringify(option.params));
+
+		httpReq(optParam).then(response=>{
+			resolve(response);
+		}).catch(error=>{
+			console.log(error);
+			console.log("失败了！咋回事？");
+		})
+	})
+}
+
+export { httpReq , sendRequest }

@@ -26,7 +26,7 @@
 			    <el-table-column prop="AUDITMONTH" label="稽核时间"></el-table-column>
 			    <el-table-column prop="PLATFORMNAME" label="稽核平台">
 			    	<template slot-scope="scope">
-			        	<el-button @click="handleClick(scope.row)" type="text" size="small">{{scope.row.PLATFORMNAME}}</el-button>
+			        	<el-button @click="handleClick(scope.row,scope.column)" type="text" size="small">{{scope.row.PLATFORMNAME}}</el-button>
 			      	</template>
 			    </el-table-column>
 			    <el-table-column prop="CLASSNAME" label="业务类型"></el-table-column>
@@ -56,7 +56,7 @@
 			    <el-table-column prop="PLATFORMNAME" label="稽核平台"></el-table-column>
 			    <el-table-column prop="COMPARETALBESOURCESYSTEM" label="治理业务">
 			    	<template slot-scope="scope">
-			        	<el-button @click="handleClick(scope.row)" type="text" size="small">{{scope.row.COMPARETALBESOURCESYSTEM}}</el-button>
+			        	<el-button @click="handleClick(scope.row,scope.column)" type="text" size="small">{{scope.row.COMPARETALBESOURCESYSTEM}}</el-button>
 			      	</template>
 			    </el-table-column>
 			    <el-table-column prop="CONSISRATIO" label="一致率(%)"></el-table-column>
@@ -91,43 +91,46 @@
 	    	return {
 	    		overviewData:[
 	    			{
-	    				AUDITDATE: '201808',
-			            PLATFORMNAME: 'CRM&亲情通',
-			            COMPARETALBESOURCESYSTEM: '家庭业务',
-			            CONSISRATIO: '97.95%',
-			            LASTLINKRELATIVERATIO: '100.03%',
-			            CT: 371,
-			            CTNEW: 7,
-			            OVERLAPDEFF: 364,
-			            CTRATIO: '0.02%',
-			            NEW_HUANBISHANGYUE:'20%',
-			            REPAIRALLCOUNT:20,
-			            INTERFACESUCCESSCOUNT:20,
-			            REPAIRDATASUCCESSRATE:'100%',
+	    				AUDITMONTH: '',
+			            PLATFORMNAME: '',
+			            CLASSNAME: '',
+			            CONSISRATIO: '',
+			            LASTLINKRELATIVERATIO: '',
+			            CT: '',
+			            CTNEW: '',
+			            OVERLAPDEFF: '',
+			            CTRATIO: '',
+			            NEW_HUANBISHANGYUE:'',
+			            REPAIRALLCOUNT:'',
+			            INTERFACESUCCESSCOUNT:'',
+			            REPAIRDATASUCCESSRATE:'',
+			            REPORTLINK:''
 	    			}
 	    		],
 	    		importData: [
 		    		{
-			          AUDITDATE: '201808',
-			          PLATFORMNAME: 'CRM&亲情通',
-			          CLASSNAME: '家庭业务',
-			          COMPARETALBESOURCESYSTEM: '1',
-			          CONSISRATIO: '97.95%',
-			          LASTLINKRELATIVERATIO:'100%',
-			          LASTCONSISRATIO: '100.03%',
-			          ERRORALL: 371,
-			          ERRORNEW: 7,
-			          OVERLAPDEFF: 364,
-			          ERRORNEWRATIO: '0.02%',
-			          CT:11,
-			          CTNEW:100,
-			          CTRATIO:'100%',
-			          REPAIRALLCOUNT:22223,
-			          NEW_HUANBISHANGYUE:11,
-			          INTERFACESUCCESSCOUNT:222,
-			          REPAIRDATASUCCESSRATE:333			          
+			          AUDITMONTH: '',
+			          PLATFORMNAME: '',
+			          CLASSNAME: '',
+			          COMPARETALBESOURCESYSTEM: '',
+			          CONSISRATIO: '',
+			          LASTLINKRELATIVERATIO:'',
+			          LASTCONSISRATIO: '',
+			          ERRORALL: '',
+			          ERRORNEW: '',
+			          OVERLAPDEFF: '',
+			          ERRORNEWRATIO: '',
+			          CT:'',
+			          CTNEW:'',
+			          CTRATIO:'',
+			          REPAIRALLCOUNT:'',
+			          NEW_HUANBISHANGYUE:'',
+			          INTERFACESUCCESSCOUNT:'',
+			          REPAIRDATASUCCESSRATE:'',		
+			          SERIALNUMBER:''
 			      	}
-		        ]
+		        ],
+		        BUSITYPE:''
 	    	}
 	  	},
 	  	created(){
@@ -150,10 +153,110 @@
 					console.log('请求失败！');
 				})
 			},
-	      	handleClick(row) {
-	        	alert(row.PLATFORMNAME);
-	      	},
+	      	handleClick(row,column) {
+	      		
+	      		if(column.label==='稽核平台'){
+	      			
+	      		this.BUSITYPE=row.REPORTLINK.split('=')[1];
+				let auditInfo = {
+					'BUSITYPE':this.BUSITYPE
+				};
+				if(this.BUSITYPE==='0012'){
+				this.$store.dispatch('setParamasInfo',auditInfo);
+					this.$router.push({
+			    	    name:'OverviewFK'
+			       });
+			      }else if(this.BUSITYPE==='0102'){
+			      	
+				this.$store.dispatch('setParamasInfo',auditInfo);
+					this.$router.push({
+			    	    name:'OverviewFB'
+			       });
+			      
+			      }else if(this.BUSITYPE==='0020'){
+			      	
+				this.$store.dispatch('setParamasInfo',auditInfo);
+					this.$router.push({
+			    	    name:'OverviewGSM'
+			       });
+			      
+			      }else if(this.BUSITYPE==='0031'){
+			      	
+				this.$store.dispatch('setParamasInfo',auditInfo);
+					this.$router.push({
+			    	    name:'SchoolSignal'
+			       });
+			      
+			      }else if(this.BUSITYPE==='BOSS'){
+			      	
+				this.$store.dispatch('setParamasInfo',auditInfo);
+					this.$router.push({
+			    	    name:'OverviewCBA'
+			       });
+			      
+			      }else if(this.BUSITYPE==='HLR'){
+			      	
+				this.$store.dispatch('setParamasInfo',auditInfo);
+					this.$router.push({
+			    	    name:'OverviewCHA'
+			       });
+			      
+			      }else if(this.BUSITYPE==='0014'){
+			      	
+				this.$store.dispatch('setParamasInfo',auditInfo);
+					this.$router.push({
+			    	    name:'OverviewLW'
+			       });
+			      
+			      }else if(this.BUSITYPE==='0032'){
+			      	
+				this.$store.dispatch('setParamasInfo',auditInfo);
+					this.$router.push({
+			    	    name:'OverviewSMHK'
+			       });
+			      
+			      }else if(this.BUSITYPE==='139'){
+			      	
+				this.$store.dispatch('setParamasInfo',auditInfo);
+					this.$router.push({
+			    	    name:'CrmMail139'
+			       });
+			      
+			      }else if(this.BUSITYPE==='MCAS'){
+			      	this.$store.dispatch('setParamasInfo',auditInfo);
+					this.$router.push({
+			    	    name:'CrmMcas'
+			       });
+			      }else if(this.BUSITYPE==='MISC'){
+			      	this.$store.dispatch('setParamasInfo',auditInfo);
+					this.$router.push({
+			    	    name:'CrmMisc'
+			       });
+			      }else if(this.BUSITYPE==='5000'){
+			      	this.$store.dispatch('setParamasInfo',auditInfo);
+					this.$router.push({
+			    	    name:'GroupColorBell'
+			       });
+			      }	
+	      }else {
+	      		this.SERIALNUMBER=row.SERIALNUMBER;
+	      		this.serviceName=row.COMPARETALBESOURCESYSTEM;
+	      		if(this.SERIALNUMBER>=17 && this.SERIALNUMBER <=32 ||this.SERIALNUMBER ===37){
+	      			let businessInfo = {
+					'serviceIds':this.SERIALNUMBER,
+					'serviceName':this.serviceName
+				};
+				    this.$store.dispatch('setParamasInfo',businessInfo);
+					this.$router.push({
+			    	    name:'GroupShortMessageName'
+			       });
+	      			
+	      			
+	      		}
+	      	}
+			      },
 	      	//导出Excel	
+	      	
 			exportExcel(){
 				const th = ['稽核时间', '稽核平台', '业务类型', '一致率(%)','一致率环比上月(%)','总差异数','新增差异数','重复差异数','新增差异占比(%)']
 		      	const filterVal = ['date', 'name', 'type', 'sameRatio','monthRatio','allNum','newNum','sameNum','newRatio']
